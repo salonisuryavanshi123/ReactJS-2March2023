@@ -19,6 +19,12 @@ function Teacher() {
                                             createdAt:'14995699'
                                           }
                                         ]);
+  const [payload,setPayload] = useState({
+                                          "data": {
+                                            "name": "Teacher4"
+                                          }
+                                        })   
+  const [teacherName,setTeacherName] = useState('');                                                                       
 
   // useEffect is for page load
   // useEffect(cbfn,arr);
@@ -47,26 +53,54 @@ function Teacher() {
   //Every Hook is a function
 
   //2.2 Function Defination Area
+  let sendData =()=>{
+    //alert("ok");
+    fetch(`http://localhost:1337/api/teachers`,{
+      "method":"POST",
+      "headers":{
+        "Content-Type": "application/json"
+      },
+      "body":JSON.stringify(payload)
+    })
+    .then((res)=>{
+      // I want to convert the response into json readable
+      return res.json();
+    })
+    .then((data)=>{
+      console.log(data);
+    })
+    .catch((err)=>{
+      console.log(err);
+    });
+  }
+  let changeValue =(event)=>{
+    console.log(event.target.value);
+    setTeacherName(event.target.value);
+    console.log('HOOK teacherName',teacherName);
+
+    setPayload({
+      ...payload,
+      data:{
+        name:document.querySelector('input#teachername').value
+      }
+    });
+  }
 
   //2.3 Return Statement
   return (
     <>
-        <div className="container">
-          <form className="mt-5 offset-1">
+        <div className="container offset-2 ">
+          <h1>Create Teacher</h1>
+          <form className="mt-5">
             <div className="mb-3">
-              <label htmlFor="exampleInputEmail1" className="form-label">Email address</label>
-              <input type="email" className="form-control" id="exampleInputEmail1" aria-describedby="emailHelp" />
-              <div id="emailHelp" className="form-text"></div>
+              <label htmlFor="teachername" className="form-label">Teacher Name</label>
+              <input type="text" className="form-control" id="teachername" name="name" onKeyUp={(e)=>{changeValue(e)}}/>
             </div>
-            <div className="mb-3">
-              <label htmlFor="exampleInputPassword1" className="form-label">Password</label>
-              <input type="password" className="form-control" id="exampleInputPassword1" />
-            </div>
-            <button type="submit" className="btn btn-primary">Submit</button>
+            <button type="button" className="btn btn-primary" onClick={()=>{sendData()}}>Submit</button>
           </form>
           <br />
           <hr />
-          <table className="table mt-5 offset-1">
+          <table className="table mt-5">
             <thead>
               <tr>
                 <th scope="col">#</th>
@@ -77,7 +111,7 @@ function Teacher() {
             <tbody>
               {
                 teachers.map((cv,idx,arr)=>{
-                  return  <tr>
+                  return  <tr key={idx}>
                             <td>{cv.id}</td>
                             <td>{cv.name}</td>
                             <td>{cv.createdAt}</td>
