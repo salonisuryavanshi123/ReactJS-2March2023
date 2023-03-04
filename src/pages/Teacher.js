@@ -42,7 +42,7 @@ function Teacher() {
         return {
                   id:cv.id,
                   name:cv.attributes.name,
-                  createAt:cv.attributes.createdAt
+                  createdAt:cv.attributes.createdAt
                }
       });
       setTeachers(newaoo);
@@ -85,6 +85,32 @@ function Teacher() {
       }
     });
   }
+  let deleteTeacher = (e)=>{
+    let x = e.target.closest('tr');
+    console.log(e.target.closest('tr').querySelector('td:first-child').innerHTML);
+    let delid = e.target.closest('tr').querySelector('td:first-child').innerHTML;
+    let ans = window.confirm("Are you sure do you really want to delete");
+    console.log(typeof ans);
+    if(ans === true){
+      //console.log('Ok');
+      //Call the DELETE REST API
+      fetch(`http://localhost:1337/api/teachers/${delid}`,{
+        method:"DELETE"
+      })
+      .then((res)=>{
+        //This Json() function make the incoming data json readable
+        return res.json();
+      })
+      .then((data)=>{
+        x.remove();
+        console.log(data);
+        window.alert('Deleted Successfully')
+      })
+      .catch((err)=>{});
+    }else{
+      console.log('NotOk');
+    }
+  }
 
   //2.3 Return Statement
   return (
@@ -106,6 +132,7 @@ function Teacher() {
                 <th scope="col">#</th>
                 <th scope="col">Name</th>
                 <th scope="col">CreatedAt</th>
+                <th scope="col">Action</th>
               </tr>
             </thead>
             <tbody>
@@ -115,6 +142,11 @@ function Teacher() {
                             <td>{cv.id}</td>
                             <td>{cv.name}</td>
                             <td>{cv.createdAt}</td>
+                            <td>
+                              <button className="btn btn-success btn-sm">View</button>
+                              <button className="btn btn-primary btn-sm">Edit</button>
+                              <button className="btn btn-danger btn-sm" onClick={(e)=>{deleteTeacher(e)}}>Delete</button>
+                            </td>
                           </tr>
                 })
               }
